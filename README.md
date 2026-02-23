@@ -51,9 +51,7 @@ Test your knowledge with AI-generated quizzes on any topic:
 ```bash
 npm install
 npm run dev
-```
-
-Open [http://localhost:5173](http://localhost:5173). 
+``` 
 
 **First-time setup**: Models will automatically download on first use (~200MB total) and are cached in your browser for instant future access.
 
