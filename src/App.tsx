@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { initSDK, getAccelerationMode } from './runanywhere';
-import { ChatTab } from './components/ChatTab';
-import { VisionTab } from './components/VisionTab';
-import { VoiceTab } from './components/VoiceTab';
+import { VoiceQATab } from './components/VoiceQATab';
+import { VisualLearningTab } from './components/VisualLearningTab';
+import { SmartNotesTab } from './components/SmartNotesTab';
+import { QuizMeTab } from './components/QuizMeTab';
 
-type Tab = 'chat' | 'vision' | 'voice';
+type Tab = 'voice-qa' | 'visual' | 'notes' | 'quiz';
 
 export function App() {
   const [sdkReady, setSdkReady] = useState(false);
   const [sdkError, setSdkError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<Tab>('chat');
+  const [activeTab, setActiveTab] = useState<Tab>('voice-qa');
 
   useEffect(() => {
     initSDK()
@@ -30,7 +31,7 @@ export function App() {
     return (
       <div className="app-loading">
         <div className="spinner" />
-        <h2>Loading RunAnywhere SDK...</h2>
+        <h2>Loading AI Study Buddy...</h2>
         <p>Initializing on-device AI engine</p>
       </div>
     );
@@ -41,26 +42,31 @@ export function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>RunAnywhere AI</h1>
+        <h1>AI Study Buddy</h1>
+        <p className="app-subtitle">Your Private, Offline Learning Companion</p>
         {accel && <span className="badge">{accel === 'webgpu' ? 'WebGPU' : 'CPU'}</span>}
       </header>
 
       <nav className="tab-bar">
-        <button className={activeTab === 'chat' ? 'active' : ''} onClick={() => setActiveTab('chat')}>
-          💬 Chat
+        <button className={activeTab === 'voice-qa' ? 'active' : ''} onClick={() => setActiveTab('voice-qa')}>
+          🎙️ Voice Q&A
         </button>
-        <button className={activeTab === 'vision' ? 'active' : ''} onClick={() => setActiveTab('vision')}>
-          📷 Vision
+        <button className={activeTab === 'visual' ? 'active' : ''} onClick={() => setActiveTab('visual')}>
+          📷 Visual
         </button>
-        <button className={activeTab === 'voice' ? 'active' : ''} onClick={() => setActiveTab('voice')}>
-          🎙️ Voice
+        <button className={activeTab === 'notes' ? 'active' : ''} onClick={() => setActiveTab('notes')}>
+          📝 Notes
+        </button>
+        <button className={activeTab === 'quiz' ? 'active' : ''} onClick={() => setActiveTab('quiz')}>
+          🎯 Quiz
         </button>
       </nav>
 
       <main className="tab-content">
-        {activeTab === 'chat' && <ChatTab />}
-        {activeTab === 'vision' && <VisionTab />}
-        {activeTab === 'voice' && <VoiceTab />}
+        {activeTab === 'voice-qa' && <VoiceQATab />}
+        {activeTab === 'visual' && <VisualLearningTab />}
+        {activeTab === 'notes' && <SmartNotesTab />}
+        {activeTab === 'quiz' && <QuizMeTab />}
       </main>
     </div>
   );

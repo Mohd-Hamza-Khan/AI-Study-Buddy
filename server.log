@@ -1,0 +1,59 @@
+
+> runanywhere-web-starter@0.1.0 dev
+> vite
+
+Port 5173 is in use, trying another one...
+
+  [32m[1mVITE[22m v6.4.1[39m  [2mready in [0m[1m807[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5174[22m/[39m
+[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/index.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/index.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/LlamaCPP.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/LlamaCppProvider.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Extensions/RunAnywhere+VLM.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Extensions/RunAnywhere+ToolCalling.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Extensions/RunAnywhere+TextGeneration.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Foundation/TelemetryService.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Extensions/RunAnywhere+Diffusion.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Extensions/RunAnywhere+StructuredOutput.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Extensions/RunAnywhere+Embeddings.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Infrastructure/VLMWorkerBridge.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/ONNX.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Infrastructure/VideoCapture.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Infrastructure/VLMWorkerRuntime.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/Extensions/RunAnywhere+STT.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/ONNXProvider.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/Extensions/RunAnywhere+TTS.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/Infrastructure/AudioPlayback.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/Foundation/SherpaONNXBridge.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/Extensions/RunAnywhere+VAD.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/Infrastructure/AudioCapture.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/Infrastructure/AudioFileLoader.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Foundation/LlamaCppOffsets.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Foundation/WASMAnalyticsEmitter.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Extensions/ToolCallingTypes.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Foundation/LlamaCppBridge.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Extensions/VLMTypes.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/Extensions/STTTypes.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Extensions/EmbeddingsTypes.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Extensions/DiffusionTypes.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/Extensions/VADTypes.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-onnx/dist/Foundation/SherpaHelperLoader.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Foundation/AnalyticsEventsBridge.js" points to missing source files
+Sourcemap for "A:/HamzaDesk/IUL/VibeSigularity-Hackathon/coding era/project1.o/web-project-name/node_modules/@runanywhere/web-llamacpp/dist/Foundation/PlatformAdapter.js" points to missing source files
+[2m10:14:32 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/QuizMeTab.tsx[22m
+[2m10:14:45 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/QuizMeTab.tsx[22m
+[2m10:15:20 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m10:15:27 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m10:15:37 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m10:19:29 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/QuizMeTab.tsx[22m
+[2m10:19:44 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/QuizMeTab.tsx[22m
+[2m10:20:03 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/QuizMeTab.tsx[22m
+[2m10:20:10 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/QuizMeTab.tsx[22m
+[2m10:20:24 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/QuizMeTab.tsx[22m
+[2m10:49:23 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m10:49:30 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m10:58:44 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m10:59:31 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
