@@ -26,14 +26,14 @@ export function QuizMeTab() {
   const [topic, setTopic] = useState('');
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [numQuestions, setNumQuestions] = useState(5);
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [bufferedQuestion, setBufferedQuestion] = useState<Question | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
   const [score, setScore] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Generate a single question ---
   const fetchQuestion = useCallback(async (attempt = 1): Promise<Question> => {
     const difficultyDesc = {
       easy: 'easy (basic knowledge)',
@@ -41,128 +41,174 @@ export function QuizMeTab() {
       hard: 'hard (advanced knowledge)',
     };
 
-    const prompt = `Generate a ${difficultyDesc[difficulty]} multiple choice quiz question about ${topic}.
-Use 4 distinct options labeled A-D.
-Return in this format:
+    // no history checking for now
+    let historyPrompt = '';
 
-Question: [text]
-A) [option1]
-B) [option2]
-C) [option3]
-D) [option4]
-Correct: [A-D]
-Explanation: [short explanation]`;
+    const prompt = `Generate a ${difficultyDesc[difficulty]} multiple choice quiz question about ${topic}.${historyPrompt}
 
-    try {
-      const result = await TextGeneration.generate(prompt, {
-        maxTokens: 200,
-        temperature: 0.7,
-        systemPrompt: 'You are a concise quiz generator. Only return valid MCQs.',
-      });
+Ensure the question is conceptually different from previous ones.
+Ensure all 4 answer options are distinct and not paraphrases of each other.
 
-      const lines = result.text.split('\n').filter(l => l.trim());
-      let question = '';
-      const options: string[] = [];
-      let correctAnswer = 0;
-      let explanation = '';
+Question: [Your question here]
+A) [First option]
+B) [Second option]
+C) [Third option]
+D) [Fourth option]
+Correct: [A, B, C, or D]
+Explanation: [Why the answer is correct]`;
 
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (trimmed.startsWith('Question:')) {
-          question = trimmed.replace('Question:', '').trim();
-        } else if (trimmed.match(/^[A-D]\)/)) {
-          const optionText = trimmed.substring(2).trim();
-          if (!options.some(o => o.toLowerCase() === optionText.toLowerCase())) {
-            options.push(optionText);
-          }
-        } else if (trimmed.startsWith('Correct:')) {
-          const letter = trimmed.replace('Correct:', '').trim().toUpperCase()[0];
-          correctAnswer = letter.charCodeAt(0) - 65;
-        } else if (trimmed.startsWith('Explanation:')) {
-          explanation = trimmed.replace('Explanation:', '').trim();
+    const result = await TextGeneration.generate(prompt, {
+      maxTokens: 200,
+      temperature: 0.8,
+      systemPrompt:
+        'You are a quiz generator. Create clear, educational, non-repetitive multiple choice questions.',
+    });
+
+    const lines = result.text.split('\n').filter((l) => l.trim());
+    let question = '';
+    const options: string[] = [];
+    let correctAnswer = 0;
+    let explanation = '';
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+
+      if (trimmed.startsWith('Question:')) {
+        question = trimmed.replace('Question:', '').trim();
+      } else if (trimmed.match(/^[A-D]\)/)) {
+        const optionText = trimmed.substring(2).trim();
+        if (!options.some(opt => opt.toLowerCase() === optionText.toLowerCase())) {
+          options.push(optionText);
         }
+      } else if (trimmed.startsWith('Correct:')) {
+        const correctLetter = trimmed.replace('Correct:', '').trim().toUpperCase()[0];
+        correctAnswer = correctLetter.charCodeAt(0) - 65;
+      } else if (trimmed.startsWith('Explanation:')) {
+        explanation = trimmed.replace('Explanation:', '').trim();
       }
-
-      if (question && options.length === 4 && explanation) {
-        return { question, options, correctAnswer, explanation };
-      } else if (attempt < 2) {
-        return fetchQuestion(attempt + 1);
-      } else {
-        throw new Error('Failed to parse question');
-      }
-    } catch (err) {
-      if (attempt < 2) return fetchQuestion(attempt + 1);
-      throw err;
     }
-  }, [topic, difficulty]);
 
-  // --- Pre-generate all quiz questions ---
-  const generateAllQuestions = useCallback(async () => {
+    const uniqueOptions = new Set(options.map(o => o.toLowerCase()));
+
+    if (
+      question &&
+      options.length === 4 &&
+      uniqueOptions.size === 4 &&
+      explanation
+    ) {
+      // no duplicate-question logic
+
+      return {
+        question,
+        options,
+        correctAnswer: Math.max(0, Math.min(3, correctAnswer)),
+        explanation,
+      };
+    }
+
+    if (attempt < 3) {
+      console.warn('Parsing failed, retrying...', attempt + 1);
+      return fetchQuestion(attempt + 1);
+    }
+
+    // no fallback; propagate the failure so caller can handle it
+    throw new Error('Unable to generate a valid quiz question');
+  }, [topic, difficulty, currentIndex]);
+
+  const generateNextQuestion = useCallback(async () => {
     setQuizState('loading');
-    setError(null);
-    setScore(0);
-    setCurrentIndex(0);
-    setQuestions([]);
     setSelectedAnswer(null);
     setQuizResult(null);
 
     try {
-      const promises = Array.from({ length: numQuestions }).map(() => fetchQuestion());
-      const allQs = await Promise.all(promises);
-      setQuestions(allQs);
+      const q = await fetchQuestion();
+      setCurrentQuestion(q);
+      setAskedQuestions((prev) => [...prev, q.question]);
       setQuizState('quiz-active');
-    } catch {
-      setError('Failed to generate questions. Try again.');
+    } catch (err) {
+      setError(`Failed to generate question.`);
       setQuizState('setup');
     }
-  }, [fetchQuestion, numQuestions]);
+  }, [fetchQuestion]);
 
   const startQuiz = useCallback(async () => {
     if (!topic.trim()) {
       setError('Please enter a topic');
       return;
     }
+
     if (loader.state !== 'ready') {
       const ok = await loader.ensure();
       if (!ok) return;
     }
-    generateAllQuestions();
-  }, [topic, loader, generateAllQuestions]);
+
+    setQuizState('loading');
+    setError(null);
+    setScore(0);
+    setCurrentIndex(0);
+    setAskedQuestions([]);
+    setBufferedQuestion(null);
+
+    await generateNextQuestion();
+  }, [topic, loader, generateNextQuestion]);
 
   const checkAnswer = useCallback(() => {
-    if (selectedAnswer === null) return;
+    if (selectedAnswer === null || !currentQuestion) return;
 
-    const currentQ = questions[currentIndex];
-    const correct = selectedAnswer === currentQ.correctAnswer;
-    if (correct) setScore(prev => prev + 1);
+    const correct = selectedAnswer === currentQuestion.correctAnswer;
+    if (correct) setScore((prev) => prev + 1);
 
-    setQuizResult({ correct, explanation: currentQ.explanation });
+    setQuizResult({
+      correct,
+      explanation: currentQuestion.explanation,
+    });
+
     setQuizState('showing-result');
-  }, [selectedAnswer, questions, currentIndex]);
+
+    fetchQuestion()
+      .then((q) => {
+        setBufferedQuestion(q);
+        setAskedQuestions((prev) => [...prev, q.question]);
+      })
+      .catch(() => setBufferedQuestion(null));
+  }, [selectedAnswer, currentQuestion, fetchQuestion]);
 
   const nextQuestion = useCallback(() => {
     const nextIndex = currentIndex + 1;
-    if (nextIndex >= questions.length) {
+
+    if (nextIndex >= numQuestions) {
       setQuizState('completed');
     } else {
       setCurrentIndex(nextIndex);
-      setSelectedAnswer(null);
-      setQuizResult(null);
-      setQuizState('quiz-active');
+
+      if (bufferedQuestion) {
+        setCurrentQuestion(bufferedQuestion);
+        setBufferedQuestion(null);
+        setQuizState('quiz-active');
+
+        fetchQuestion()
+          .then((q) => {
+            setBufferedQuestion(q);
+            setAskedQuestions((prev) => [...prev, q.question]);
+          })
+          .catch(() => setBufferedQuestion(null));
+      } else {
+        generateNextQuestion();
+      }
     }
-  }, [currentIndex, questions.length]);
+  }, [currentIndex, numQuestions, bufferedQuestion, fetchQuestion, generateNextQuestion]);
 
   const restartQuiz = useCallback(() => {
     setQuizState('setup');
-    setQuestions([]);
+    setCurrentQuestion(null);
+    setBufferedQuestion(null);
+    setAskedQuestions([]);
     setCurrentIndex(0);
     setScore(0);
     setSelectedAnswer(null);
     setQuizResult(null);
     setError(null);
   }, []);
-
-  // --- JSX ---
   return (
     <div className="tab-panel quiz-panel">
       <div className="panel-header">
@@ -184,7 +230,11 @@ Explanation: [short explanation]`;
         <div className="error-banner">
           <span className="error-text">{error}</span>
           {quizState === 'setup' && (
-            <button className="btn btn-sm" onClick={() => setError(null)} style={{ marginLeft: 10 }}>
+            <button 
+              className="btn btn-sm" 
+              onClick={() => setError(null)}
+              style={{ marginLeft: '10px' }}
+            >
               Dismiss
             </button>
           )}
@@ -200,14 +250,14 @@ Explanation: [short explanation]`;
               className="input-text"
               placeholder="e.g., World History, JavaScript, Biology..."
               value={topic}
-              onChange={e => setTopic(e.target.value)}
+              onChange={(e) => setTopic(e.target.value)}
             />
           </div>
 
           <div className="form-group">
             <label>Difficulty</label>
             <div className="difficulty-buttons">
-              {(['easy', 'medium', 'hard'] as Difficulty[]).map(d => (
+              {(['easy', 'medium', 'hard'] as Difficulty[]).map((d) => (
                 <button
                   key={d}
                   className={`btn ${difficulty === d ? 'btn-primary' : ''}`}
@@ -226,7 +276,7 @@ Explanation: [short explanation]`;
               min="3"
               max="10"
               value={numQuestions}
-              onChange={e => setNumQuestions(Number(e.target.value))}
+              onChange={(e) => setNumQuestions(Number(e.target.value))}
             />
           </div>
 
@@ -239,22 +289,22 @@ Explanation: [short explanation]`;
       {quizState === 'loading' && (
         <div className="quiz-loading">
           <div className="spinner" />
-          <p>Generating {numQuestions} questions...</p>
+          <p>Generating question {currentIndex + 1} of {numQuestions}...</p>
         </div>
       )}
 
-      {(quizState === 'quiz-active' || quizState === 'showing-result') && questions[currentIndex] && (
+      {(quizState === 'quiz-active' || quizState === 'showing-result') && currentQuestion && (
         <div className="quiz-question">
           <div className="quiz-progress">
             Question {currentIndex + 1} of {numQuestions} | Score: {score}/{currentIndex + (quizResult?.correct ? 1 : 0)}
           </div>
 
-          <h3 className="question-text">{questions[currentIndex].question}</h3>
+          <h3 className="question-text">{currentQuestion.question}</h3>
 
           <div className="quiz-options">
-            {questions[currentIndex].options.map((option, i) => {
+            {currentQuestion.options.map((option, i) => {
               const isSelected = selectedAnswer === i;
-              const isCorrect = i === questions[currentIndex].correctAnswer;
+              const isCorrect = i === currentQuestion.correctAnswer;
               const showResult = quizState === 'showing-result';
 
               let className = 'quiz-option';
@@ -267,7 +317,7 @@ Explanation: [short explanation]`;
                   key={i}
                   className={className}
                   onClick={() => setSelectedAnswer(i)}
-                  disabled={showResult}
+                  disabled={quizState === 'showing-result'}
                 >
                   <span className="option-letter">{String.fromCharCode(65 + i)}</span>
                   <span className="option-text">{option}</span>
@@ -277,7 +327,11 @@ Explanation: [short explanation]`;
           </div>
 
           {quizState === 'quiz-active' && (
-            <button className="btn btn-primary btn-lg" onClick={checkAnswer} disabled={selectedAnswer === null}>
+            <button
+              className="btn btn-primary btn-lg"
+              onClick={checkAnswer}
+              disabled={selectedAnswer === null}
+            >
               Check Answer
             </button>
           )}
@@ -298,8 +352,12 @@ Explanation: [short explanation]`;
         <div className="quiz-completed">
           <h2>Quiz Complete!</h2>
           <div className="final-score">
-            <div className="score-display">{score} / {numQuestions}</div>
-            <div className="score-percentage">{Math.round((score / numQuestions) * 100)}%</div>
+            <div className="score-display">
+              {score} / {numQuestions}
+            </div>
+            <div className="score-percentage">
+              {Math.round((score / numQuestions) * 100)}%
+            </div>
           </div>
           <p className="score-message">
             {score === numQuestions && 'Perfect score! Outstanding!'}
@@ -314,6 +372,8 @@ Explanation: [short explanation]`;
           </div>
         </div>
       )}
+
+      {/* Debug Output */}
     </div>
   );
 }
