@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { ModelCategory } from '@runanywhere/web';
 import { TextGeneration } from '@runanywhere/web-llamacpp';
 import { useModelLoader } from '../hooks/useModelLoader';
@@ -33,6 +33,7 @@ export function QuizMeTab() {
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
   const [score, setScore] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [askedQuestions, setAskedQuestions] = useState<string[]>([]);
 
   const fetchQuestion = useCallback(async (attempt = 1): Promise<Question> => {
     const difficultyDesc = {
@@ -41,8 +42,10 @@ export function QuizMeTab() {
       hard: 'hard (advanced knowledge)',
     };
 
-    // no history checking for now
-    let historyPrompt = '';
+    const historyPrompt =
+      askedQuestions.length > 0
+        ? `\n\nPreviously asked questions (for topic "${topic}"):\n- ${askedQuestions.join('\n- ')}`
+        : '';
 
     const prompt = `Generate a ${difficultyDesc[difficulty]} multiple choice quiz question about ${topic}.${historyPrompt}
 
@@ -94,10 +97,9 @@ Explanation: [Why the answer is correct]`;
       question &&
       options.length === 4 &&
       uniqueOptions.size === 4 &&
-      explanation
+      explanation &&
+      !askedQuestions.includes(question)
     ) {
-      // no duplicate-question logic
-
       return {
         question,
         options,
@@ -107,27 +109,24 @@ Explanation: [Why the answer is correct]`;
     }
 
     if (attempt < 3) {
-      console.warn('Parsing failed, retrying...', attempt + 1);
+      console.warn('Parsing failed or duplicate question, retrying...', attempt + 1);
       return fetchQuestion(attempt + 1);
     }
-
-    // no fallback; propagate the failure so caller can handle it
-    throw new Error('Unable to generate a valid quiz question');
-  }, [topic, difficulty, currentIndex]);
+    throw new Error('Unable to generate a valid and unique quiz question');
+  }, [topic, difficulty, askedQuestions]);
 
   const generateNextQuestion = useCallback(async () => {
-    setQuizState('loading');
     setSelectedAnswer(null);
     setQuizResult(null);
 
     try {
       const q = await fetchQuestion();
-      setCurrentQuestion(q);
       setAskedQuestions((prev) => [...prev, q.question]);
-      setQuizState('quiz-active');
+      return q;
     } catch (err) {
       setError(`Failed to generate question.`);
       setQuizState('setup');
+      return null;
     }
   }, [fetchQuestion]);
 
@@ -149,7 +148,14 @@ Explanation: [Why the answer is correct]`;
     setAskedQuestions([]);
     setBufferedQuestion(null);
 
-    await generateNextQuestion();
+    const firstQuestion = await generateNextQuestion();
+    if (firstQuestion) {
+      setCurrentQuestion(firstQuestion);
+      setQuizState('quiz-active');
+
+      // Pre-fetch the next question
+      generateNextQuestion().then(setBufferedQuestion);
+    }
   }, [topic, loader, generateNextQuestion]);
 
   const checkAnswer = useCallback(() => {
@@ -164,50 +170,48 @@ Explanation: [Why the answer is correct]`;
     });
 
     setQuizState('showing-result');
-
-    fetchQuestion()
-      .then((q) => {
-        setBufferedQuestion(q);
-        setAskedQuestions((prev) => [...prev, q.question]);
-      })
-      .catch(() => setBufferedQuestion(null));
-  }, [selectedAnswer, currentQuestion, fetchQuestion]);
+  }, [selectedAnswer, currentQuestion]);
 
   const nextQuestion = useCallback(() => {
-    const nextIndex = currentIndex + 1;
+    setSelectedAnswer(null);
+    setQuizResult(null);
 
+    const nextIndex = currentIndex + 1;
     if (nextIndex >= numQuestions) {
       setQuizState('completed');
-    } else {
-      setCurrentIndex(nextIndex);
-
-      if (bufferedQuestion) {
-        setCurrentQuestion(bufferedQuestion);
-        setBufferedQuestion(null);
-        setQuizState('quiz-active');
-
-        fetchQuestion()
-          .then((q) => {
-            setBufferedQuestion(q);
-            setAskedQuestions((prev) => [...prev, q.question]);
-          })
-          .catch(() => setBufferedQuestion(null));
-      } else {
-        generateNextQuestion();
-      }
+      return;
     }
-  }, [currentIndex, numQuestions, bufferedQuestion, fetchQuestion, generateNextQuestion]);
+
+    setCurrentIndex(nextIndex);
+
+    if (bufferedQuestion) {
+      setCurrentQuestion(bufferedQuestion);
+      setBufferedQuestion(null);
+      setQuizState('quiz-active');
+      generateNextQuestion().then(setBufferedQuestion);
+    } else {
+      setQuizState('loading');
+      generateNextQuestion().then((q) => {
+        if (q) {
+          setCurrentQuestion(q);
+          setQuizState('quiz-active');
+          generateNextQuestion().then(setBufferedQuestion);
+        }
+      });
+    }
+  }, [currentIndex, numQuestions, bufferedQuestion, generateNextQuestion]);
 
   const restartQuiz = useCallback(() => {
     setQuizState('setup');
+    setTopic('');
     setCurrentQuestion(null);
     setBufferedQuestion(null);
-    setAskedQuestions([]);
     setCurrentIndex(0);
     setScore(0);
     setSelectedAnswer(null);
     setQuizResult(null);
     setError(null);
+    setAskedQuestions([]);
   }, []);
   return (
     <div className="tab-panel quiz-panel">
@@ -296,7 +300,7 @@ Explanation: [Why the answer is correct]`;
       {(quizState === 'quiz-active' || quizState === 'showing-result') && currentQuestion && (
         <div className="quiz-question">
           <div className="quiz-progress">
-            Question {currentIndex + 1} of {numQuestions} | Score: {score}/{currentIndex + (quizResult?.correct ? 1 : 0)}
+            Question {currentIndex + 1} of {numQuestions} | Score: {score}
           </div>
 
           <h3 className="question-text">{currentQuestion.question}</h3>
@@ -360,20 +364,47 @@ Explanation: [Why the answer is correct]`;
             </div>
           </div>
           <p className="score-message">
-            {score === numQuestions && 'Perfect score! Outstanding!'}
-            {score >= numQuestions * 0.8 && score < numQuestions && 'Great job! You really know your stuff!'}
-            {score >= numQuestions * 0.6 && score < numQuestions * 0.8 && 'Good effort! Keep studying!'}
-            {score < numQuestions * 0.6 && 'Keep learning! Practice makes perfect.'}
+            {score === numQuestions
+              ? 'Perfect score! Outstanding!'
+              : score >= numQuestions * 0.8
+              ? 'Great job! You really know your stuff!'
+              : score >= numQuestions * 0.6
+              ? 'Good effort! Keep studying!'
+              : 'Keep learning! Practice makes perfect.'}
           </p>
           <div className="quiz-actions">
             <button className="btn btn-primary btn-lg" onClick={restartQuiz}>
               New Quiz
             </button>
+            <button
+              className="btn btn-secondary btn-lg"
+              onClick={() => {
+                restartQuiz();
+                // We can assume the user wants to try the same topic again
+              }}
+            >
+              Try Again
+            </button>
           </div>
         </div>
       )}
 
-      {/* Debug Output */}
+      {/* Renders a debug panel with various states shown */}
+      {import.meta.env.DEV && (
+        <div
+          style={{
+            background: 'var(--bg-card)',
+            padding: '10px',
+            margin: '10px',
+            borderRadius: '8px',
+            fontSize: '12px',
+            maxHeight: '200px',
+            overflowY: 'auto',
+          }}
+        >
+
+        </div>
+      )}
     </div>
   );
 }
