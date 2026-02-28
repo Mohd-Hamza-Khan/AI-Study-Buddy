@@ -12,7 +12,7 @@ The LFM2-350M model (small LLM) doesn't reliably generate JSON formatted output.
 1. **Changed from JSON to simple text format** - Much more reliable for small models
 2. **Added robust text parsing** - Extracts question, options, correct answer, explanation
 3. **Added fallback mechanism** - Creates demo question if parsing fails
-4. **Added debug output** - Shows raw LLM response for troubleshooting
+4. (removed debug output UI)
 5. **Better error messages** - Shows actual error instead of generic message
 
 ---
@@ -44,11 +44,6 @@ Explanation: JavaScript is a programming language used for web development.
 
 ## 🆕 New Features Added
 
-### 1. Debug Output
-After quiz generation, you can now:
-- Click "🐛 Debug: Show LLM Raw Output"
-- See exactly what the AI generated
-- Helps troubleshoot parsing issues
 
 ### 2. Fallback Questions
 If parsing fails completely:
@@ -85,7 +80,6 @@ If parsing fails completely:
 - Generic question appears like: "What is a key concept in JavaScript?"
 - Options are simple placeholders
 - Quiz still works functionally
-- Check debug output to see what LLM actually generated
 
 **❌ Real Error Case:**
 - Shows specific error message
@@ -106,12 +100,6 @@ LLM Response: [shows what AI generated]
 Quiz generation error: [shows specific error]
 ```
 
-### Step 2: Check Debug Output
-After quiz loads (or fails):
-- Scroll down
-- Click "🐛 Debug: Show LLM Raw Output"
-- See exactly what the AI generated
-- Share this if asking for help
 
 ### Step 3: Check Diagnostics Tab
 - Click "🔍 Debug" tab
@@ -133,7 +121,7 @@ After quiz loads (or fails):
 ### "Failed to generate question. Error: [specific error]"
 **Cause:** LLM generation failed or timed out  
 **Fix:**
-- Check debug output
+- Check console logs
 - Try different/simpler topic
 - Try "easy" difficulty
 - Refresh page and retry
@@ -183,10 +171,6 @@ After quiz loads (or fails):
 - Handles variations in format
 - Falls back gracefully
 
-### 3. Debug Visibility
-- Can see raw LLM output
-- Helps understand what went wrong
-- Makes troubleshooting easier
 
 ### 4. Error Recovery
 - Dismiss button for errors
@@ -198,7 +182,6 @@ After quiz loads (or fails):
 ## 🚀 Current Status
 
 ✅ **Quiz Error Fixed** - New parsing method  
-✅ **Debug Output Added** - Can see raw LLM response  
 ✅ **Fallback System Added** - Quiz works even if parsing fails  
 ✅ **Better Errors** - Specific error messages  
 ✅ **TypeScript Clean** - No compilation errors  

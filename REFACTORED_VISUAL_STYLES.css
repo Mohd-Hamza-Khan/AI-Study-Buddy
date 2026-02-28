@@ -1,0 +1,475 @@
+/* ---------------------------------------------------------------------------
+ * REFACTORED VISUAL TAB STYLES
+ * Production-ready layout with consistent spacing system
+ * --------------------------------------------------------------------------- */
+
+/* ==========================================================================
+   SPACING SYSTEM (Consistent 4px base scale)
+   ========================================================================== */
+:root {
+  /* Existing tokens */
+  --bg: #0F172A;
+  --bg-card: #1E293B;
+  --bg-input: #334155;
+  --text: #F1F5F9;
+  --text-muted: #94A3B8;
+  --primary: #6366F1;
+  --primary-hover: #4F46E5;
+  --green: #22C55E;
+  --red: #EF4444;
+  --yellow: #F59E0B;
+  --border: #334155;
+  --radius: 12px;
+  --radius-sm: 8px;
+
+  /* NEW: Spacing scale (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* NEW: Container widths */
+  --container-sm: 480px;
+  --container-md: 600px;
+  --container-lg: 800px;
+
+  /* NEW: Transition tokens */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+/* ==========================================================================
+   VISION PANEL — Main Container
+   ========================================================================== */
+.vision-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6); /* 24px — Consistent vertical rhythm */
+  padding: var(--space-4); /* 16px all around */
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* ==========================================================================
+   SECTION 1: Header
+   ========================================================================== */
+.panel-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2); /* 8px between title and description */
+}
+
+.panel-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.panel-header p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   SECTION 3: Camera Preview (Layout shift prevention)
+   ========================================================================== */
+.vision-camera-container {
+  width: 100%;
+  /* Fixed aspect ratio prevents layout shift when camera loads */
+  aspect-ratio: 4 / 3;
+  min-height: 280px;
+}
+
+.vision-camera {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.empty-state p {
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 280px;
+}
+
+/* ==========================================================================
+   SECTION 4: Interaction Controls (Properly grouped)
+   ========================================================================== */
+.vision-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4); /* 16px between all control elements */
+}
+
+/* Preset Prompts */
+.prompt-presets {
+  display: flex;
+  gap: var(--space-2); /* 8px between buttons */
+  flex-wrap: wrap;
+}
+
+/* Textarea (Full width, properly aligned) */
+.vision-prompt-textarea {
+  width: 100%; /* Full width — no manual calc needed */
+  padding: var(--space-3) var(--space-3); /* 12px vertical, 12px horizontal */
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.5;
+  outline: none;
+  resize: vertical;
+  min-height: 56px;
+  transition: border-color var(--transition-fast);
+}
+
+.vision-prompt-textarea:focus {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.vision-prompt-textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.vision-prompt-textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Action Buttons Container */
+.vision-actions {
+  display: flex;
+  justify-content: stretch; /* Full width button */
+  gap: var(--space-2);
+}
+
+.vision-actions .btn {
+  flex: 1; /* Button takes full width */
+  justify-content: center;
+}
+
+/* ==========================================================================
+   SECTION 5: Error Display
+   ========================================================================== */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--red);
+  border-radius: var(--radius-sm);
+  color: var(--red);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.error-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.error-text {
+  flex: 1;
+}
+
+/* ==========================================================================
+   SECTION 6: Analysis History (Properly separated section)
+   ========================================================================== */
+.analysis-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-4); /* Extra spacing from controls */
+}
+
+/* Visual separator */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--border) 20%,
+    var(--border) 80%,
+    transparent
+  );
+  margin: var(--space-2) 0;
+}
+
+/* Results Header */
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.results-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Results List */
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3); /* 12px between cards */
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: var(--space-1); /* Space for scrollbar */
+}
+
+/* Custom scrollbar for results */
+.results-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.results-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.results-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.results-list::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ==========================================================================
+   Analysis Card (Improved hierarchy)
+   ========================================================================== */
+.analysis-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4); /* 16px between sections */
+  padding: var(--space-4);
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  transition: border-color var(--transition-base);
+}
+
+.analysis-card:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* Question Section */
+.analysis-prompt {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.analysis-prompt .analysis-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.analysis-prompt .label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--primary);
+  margin-bottom: var(--space-1);
+}
+
+.analysis-prompt p {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Answer Section */
+.analysis-answer {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.analysis-answer .analysis-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--green);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.analysis-answer .label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.analysis-answer p {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap; /* Preserve formatting from AI */
+}
+
+/* Metadata Footer */
+.analysis-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 11px;
+  color: var(--text-muted);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.meta-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Button Enhancements (Icons + Spinner)
+   ========================================================================== */
+.btn-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: var(--space-2);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.btn-ghost:hover {
+  background: var(--bg-card);
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+/* Spinner for processing state */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  margin-right: var(--space-2);
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   Responsive Design (Mobile-first)
+   ========================================================================== */
+@media (max-width: 480px) {
+  .vision-panel {
+    gap: var(--space-4); /* Reduce gap on mobile */
+    padding: var(--space-3);
+  }
+
+  .vision-camera-container {
+    min-height: 240px; /* Smaller on mobile */
+  }
+
+  .prompt-presets {
+    gap: var(--space-2);
+  }
+
+  .prompt-presets .btn {
+    flex: 1 1 calc(50% - var(--space-1)); /* 2 columns on mobile */
+    min-width: 0;
+  }
+
+  .analysis-card {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .prompt-presets .btn {
+    flex: 0 1 auto; /* Auto-size on tablet */
+  }
+}
+
+/* ==========================================================================
+   Accessibility Enhancements
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+.vision-prompt-textarea:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

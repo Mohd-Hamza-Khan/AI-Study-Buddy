@@ -57,9 +57,7 @@ export function VisualLearningTab() {
       const msg = err instanceof Error ? err.message : String(err);
 
       if (msg.includes('NotAllowed') || msg.includes('Permission')) {
-        setError(
-          'Camera permission denied. Please allow camera access in your browser settings.',
-        );
+        setError('Camera permission denied. Please allow camera access in your browser settings.');
       } else if (msg.includes('NotFound') || msg.includes('DevicesNotFound')) {
         setError('No camera found on this device.');
       } else if (msg.includes('NotReadable') || msg.includes('TrackStartError')) {
@@ -218,15 +216,19 @@ export function VisualLearningTab() {
           <div className="results-list">
             {results.map((result, i) => (
               <div key={i} className="analysis-card">
-                <div className="analysis-prompt">
-                  <strong>Question:</strong> {result.prompt}
+                <div className="analysis-header">
+                  <div className="analysis-prompt">
+                    <strong>Question:</strong>
+                    <p>{result.prompt}</p>
+                  </div>
+                  <div className="analysis-meta">
+                    {result.timestamp.toLocaleTimeString()} · {(result.totalMs / 1000).toFixed(1)}s
+                  </div>
                 </div>
-                <div className="analysis-answer">
-                  <strong>AI Explanation:</strong>
-                  <p>{result.text}</p>
-                </div>
-                <div className="analysis-meta">
-                  {result.timestamp.toLocaleTimeString()} · {(result.totalMs / 1000).toFixed(1)}s
+
+                <div className="analysis-answer-container">
+                  <div className="analysis-answer-title">AI Explanation</div>
+                  <div className="analysis-answer-scroll">{result.text}</div>
                 </div>
               </div>
             ))}
